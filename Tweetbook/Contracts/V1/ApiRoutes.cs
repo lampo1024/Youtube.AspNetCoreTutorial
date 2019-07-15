@@ -20,6 +20,11 @@
 
             public const string Create = Base + "/posts";
         }
+        
+        public static class Tags
+        {
+            public const string GetAll = Base + "/tags";
+        }
 
         public static class Identity
         {
