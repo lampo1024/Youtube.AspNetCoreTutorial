@@ -61,5 +61,16 @@ namespace Tweetbook.Controllers.V1
             var locationUri = baseUrl + "/" + ApiRoutes.Tags.Get.Replace("{tagName}", newTag.Name);
             return Created(locationUri, newTag);
         }
+        
+        [HttpDelete(ApiRoutes.Tags.Delete)]
+        public async Task<IActionResult> Delete([FromRoute] string tagName)
+        {
+            var deleted = await _postService.DeleteTagAsync(tagName);
+
+            if (deleted)
+                return NoContent();
+
+            return NotFound();
+        }
     }
 }
