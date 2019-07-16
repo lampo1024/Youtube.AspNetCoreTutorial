@@ -24,6 +24,10 @@
         public static class Tags
         {
             public const string GetAll = Base + "/tags";
+            
+            public const string Get = Base + "/tags/{tagName}";
+            
+            public const string Create = Base + "/tags";
         }
 
         public static class Identity

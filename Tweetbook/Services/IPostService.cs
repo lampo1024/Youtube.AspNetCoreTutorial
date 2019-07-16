@@ -20,5 +20,9 @@ namespace Tweetbook.Services
         Task<bool> UserOwnsPostAsync(Guid postId, string userId);
         
         Task<List<Tag>> GetAllTagsAsync();
+
+        Task<bool> CreateTagAsync(Tag tag);
+        
+        Task<Tag> GetTagByNameAsync(string tagName);
     }
 }
