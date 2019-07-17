@@ -47,22 +47,11 @@ namespace Tweetbook.Installers
                     x.TokenValidationParameters = tokenValidationParameters;
                 });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("TagViewer", builder =>
-                {
-                    builder.RequireClaim("tags.view", "true");
-                });
-            });
+            services.AddAuthorization();
 
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo{ Title = "Tweetbook API", Version = "v1" });
-
-                var security = new Dictionary<string, IEnumerable<string>>
-                {
-                    {"Bearer", new string[0]}
-                };
                 
                 x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
