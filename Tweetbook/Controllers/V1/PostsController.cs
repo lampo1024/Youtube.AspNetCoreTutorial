@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +19,19 @@ namespace Tweetbook.Controllers.V1
     public class PostsController : Controller
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
 
-        public PostsController(IPostService postService)
+        public PostsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetPostsAsync());
+            var posts = await _postService.GetPostsAsync();
+            return Ok(_mapper.Map<List<PostResponse>>(posts));
         }
 
         [HttpPut(ApiRoutes.Posts.Update)]
@@ -45,7 +50,7 @@ namespace Tweetbook.Controllers.V1
             var updated = await _postService.UpdatePostAsync(post);
 
             if(updated)
-                return Ok(post);
+                return Ok(_mapper.Map<PostResponse>(post));
 
             return NotFound();
         }
@@ -76,7 +81,7 @@ namespace Tweetbook.Controllers.V1
             if (post == null)
                 return NotFound();
 
-            return Ok(post);
+            return Ok(_mapper.Map<PostResponse>(post));
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -95,9 +100,8 @@ namespace Tweetbook.Controllers.V1
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
-
-            var response = new PostResponse {Id = post.Id};
-            return Created(locationUri, response);
+            
+            return Created(locationUri, _mapper.Map<PostResponse>(post));
         }
     }
 }

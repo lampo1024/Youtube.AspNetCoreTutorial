@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tweetbook.Contracts.V1;
 using Tweetbook.Contracts.V1.Requests;
+using Tweetbook.Contracts.V1.Responses;
 using Tweetbook.Domain;
 using Tweetbook.Extensions;
 using Tweetbook.Services;
@@ -15,16 +19,19 @@ namespace Tweetbook.Controllers.V1
     public class TagsController : Controller
     {
         private readonly IPostService _postService;
+        private readonly IMapper _mapper;
         
-        public TagsController(IPostService postService)
+        public TagsController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
         
         [HttpGet(ApiRoutes.Tags.GetAll)]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetAllTagsAsync());
+            var tags = await _postService.GetAllTagsAsync();
+            return Ok(_mapper.Map<List<TagResponse>>(tags));
         }
         
         [HttpGet(ApiRoutes.Tags.Get)]
@@ -37,7 +44,7 @@ namespace Tweetbook.Controllers.V1
                 return NotFound();
             }
             
-            return Ok(tag);
+            return Ok(_mapper.Map<TagResponse>(tag));
         }
 
         [HttpPost(ApiRoutes.Tags.Create)]
@@ -58,7 +65,7 @@ namespace Tweetbook.Controllers.V1
                 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.Tags.Get.Replace("{tagName}", newTag.Name);
-            return Created(locationUri, newTag);
+            return Created(locationUri, _mapper.Map<TagResponse>(newTag));
         }
         
         [HttpDelete(ApiRoutes.Tags.Delete)]
