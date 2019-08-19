@@ -72,7 +72,7 @@ namespace Tweetbook.Controllers.V1
             var created = await _postService.CreateTagAsync(newTag);
             if (!created)
             {
-                return BadRequest(new ErrorResponse{Errors = new List<ErrorModel>{new ErrorModel{Message = "Unable to create tag"}}});
+                return BadRequest(new ErrorResponse(new ErrorModel{Message = "Unable to create tag"}));
             }
                 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
